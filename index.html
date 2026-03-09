@@ -17,6 +17,7 @@
             --gray:       #8DA4AF;
             --accent:     #F4A261;
             --danger:     #E63946;
+            --sidebar-w:  300px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,6 +28,8 @@
             color: var(--white);
             min-height: 100vh;
             overflow-x: hidden;
+            /* Reserve space for the right sidebar */
+            padding-right: var(--sidebar-w);
         }
 
         /* ── Background decoration ── */
@@ -56,7 +59,7 @@
             position: fixed;
             top: 0;
             right: 0;
-            width: 300px;
+            width: var(--sidebar-w);
             height: 100vh;
             background: var(--navy-mid);
             border-left: 1px solid rgba(0,168,150,.25);
@@ -91,8 +94,7 @@
             position: relative;
             z-index: 1;
             max-width: 760px;
-            margin-left: auto;
-            margin-right: 320px;
+            margin: 0 auto;          /* centred within the non-sidebar area */
             padding: 48px 24px 80px;
         }
 
@@ -172,10 +174,7 @@
             transition: all .2s;
             letter-spacing: 0.2px;
         }
-        .btn-primary {
-            background: var(--teal);
-            color: var(--navy);
-        }
+        .btn-primary { background: var(--teal); color: var(--navy); }
         .btn-primary:hover {
             background: var(--teal-light);
             transform: translateY(-1px);
@@ -186,14 +185,8 @@
             color: var(--teal);
             border: 1.5px solid var(--teal);
         }
-        .btn-outline:hover {
-            background: var(--teal-dim);
-            transform: translateY(-1px);
-        }
-        .btn-accent {
-            background: var(--accent);
-            color: var(--navy);
-        }
+        .btn-outline:hover { background: var(--teal-dim); transform: translateY(-1px); }
+        .btn-accent { background: var(--accent); color: var(--navy); }
         .btn-accent:hover {
             filter: brightness(1.1);
             transform: translateY(-1px);
@@ -205,11 +198,7 @@
             border: 1.5px solid var(--danger);
         }
         .btn-danger:hover { background: rgba(230,57,70,.12); }
-        .btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
 
         /* ── Info rows ── */
         .info-row {
@@ -221,10 +210,7 @@
             font-size: 0.9rem;
         }
         .info-row:last-child { border-bottom: none; }
-        .info-label {
-            color: var(--gray);
-            font-size: 0.82rem;
-        }
+        .info-label { color: var(--gray); font-size: 0.82rem; }
         .info-value {
             font-family: 'DM Mono', monospace;
             font-size: 0.82rem;
@@ -242,10 +228,10 @@
             font-family: 'DM Mono', monospace;
             letter-spacing: 0.5px;
         }
-        .status-voting   { background: rgba(0,168,150,.2);  color: var(--teal-light); border: 1px solid var(--teal); }
-        .status-closed   { background: rgba(230,57,70,.2);  color: #ff8a93;           border: 1px solid var(--danger); }
-        .status-awaiting { background: rgba(244,162,97,.2); color: var(--accent);     border: 1px solid var(--accent); }
-        .status-default  { background: rgba(141,164,175,.2);color: var(--gray);       border: 1px solid var(--gray); }
+        .status-voting   { background: rgba(0,168,150,.2);   color: var(--teal-light); border: 1px solid var(--teal); }
+        .status-closed   { background: rgba(230,57,70,.2);   color: #ff8a93;           border: 1px solid var(--danger); }
+        .status-awaiting { background: rgba(244,162,97,.2);  color: var(--accent);     border: 1px solid var(--accent); }
+        .status-default  { background: rgba(141,164,175,.2); color: var(--gray);       border: 1px solid var(--gray); }
 
         /* ── Candidates list ── */
         .candidate-item {
@@ -270,10 +256,7 @@
             color: var(--teal-light);
             flex-shrink: 0;
         }
-        .candidate-name {
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
+        .candidate-name { font-size: 0.95rem; font-weight: 500; }
         .candidate-votes {
             margin-left: auto;
             font-family: 'DM Mono', monospace;
@@ -294,7 +277,7 @@
             border: 1.5px solid rgba(255,255,255,.08);
             transition: all .15s;
         }
-        .vote-option:hover  { border-color: var(--teal); background: var(--teal-dim); }
+        .vote-option:hover   { border-color: var(--teal); background: var(--teal-dim); }
         .vote-option.selected { border-color: var(--teal); background: var(--teal-dim); }
         .vote-option input[type="radio"] { display: none; }
         .radio-dot {
@@ -359,11 +342,7 @@
         textarea:focus { border-color: var(--teal); }
 
         /* ── Button row ── */
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
         /* ── Messages log (inside sidebar) ── */
         #messages {
@@ -390,10 +369,10 @@
             animation: fadeIn .3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-        .msg.info    { border-color: var(--teal);        color: var(--light); }
-        .msg.success { border-color: var(--teal-light);  color: #9effd6; }
-        .msg.error   { border-color: var(--danger);      color: #ff9aa2; }
-        .msg.warn    { border-color: var(--accent);      color: #ffe0b8; }
+        .msg.info    { border-color: var(--teal);       color: var(--light); }
+        .msg.success { border-color: var(--teal-light); color: #9effd6; }
+        .msg.error   { border-color: var(--danger);     color: #ff9aa2; }
+        .msg.warn    { border-color: var(--accent);     color: #ffe0b8; }
         .msg-icon    { flex-shrink: 0; margin-top: 1px; }
         .msg-time {
             font-family: 'DM Mono', monospace;
@@ -451,11 +430,7 @@
         }
 
         /* ── Divider ── */
-        .divider {
-            height: 1px;
-            background: rgba(255,255,255,.07);
-            margin: 18px 0;
-        }
+        .divider { height: 1px; background: rgba(255,255,255,.07); margin: 18px 0; }
 
         /* ── Empty state ── */
         .empty-state {
@@ -466,10 +441,11 @@
             font-style: italic;
         }
 
-        /* ── Responsive: hide sidebar on narrow screens ── */
+        /* ── Responsive: collapse sidebar on narrow screens ── */
         @media (max-width: 900px) {
+            body { padding-right: 0; }
             #activity-sidebar { display: none; }
-            .page-wrap { margin-right: auto; padding: 28px 14px 60px; }
+            .page-wrap { padding: 28px 14px 60px; }
         }
 
         @media (max-width: 540px) {
@@ -620,8 +596,7 @@ function setStatus(text) {
 function selectOption(el) {
     document.querySelectorAll('.vote-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
-    const val = el.dataset.value;
-    document.getElementById('voteChoice').value = val;
+    document.getElementById('voteChoice').value = el.dataset.value;
 }
 
 /* ── Render candidates ── */
@@ -642,9 +617,7 @@ function renderCandidates(candidates) {
         const opt = document.createElement('label');
         opt.className = 'vote-option';
         opt.dataset.value = num;
-        opt.innerHTML = `
-            <div class="radio-dot"></div>
-            <span>${num}. ${c.name}</span>`;
+        opt.innerHTML = `<div class="radio-dot"></div><span>${num}. ${c.name}</span>`;
         opt.addEventListener('click', () => selectOption(opt));
         opts.appendChild(opt);
     });
