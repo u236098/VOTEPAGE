@@ -51,12 +51,48 @@
             z-index: 0;
         }
 
+        /* ── Fixed Activity Log Sidebar ── */
+        #activity-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--navy-mid);
+            border-right: 1px solid rgba(0,168,150,.25);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            padding: 28px 16px 16px;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0,168,150,.2);
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--teal);
+        }
+
         /* ── Layout ── */
         .page-wrap {
             position: relative;
             z-index: 1;
             max-width: 760px;
-            margin: 0 auto;
+            margin-left: 320px;
+            margin-right: auto;
             padding: 48px 24px 80px;
         }
 
@@ -329,13 +365,14 @@
             flex-wrap: wrap;
         }
 
-        /* ── Messages log ── */
+        /* ── Messages log (inside sidebar) ── */
         #messages {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 220px;
+            flex: 1;
             overflow-y: auto;
+            min-height: 0;
         }
         #messages::-webkit-scrollbar { width: 4px; }
         #messages::-webkit-scrollbar-track { background: transparent; }
@@ -353,11 +390,11 @@
             animation: fadeIn .3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-        .msg.info   { border-color: var(--teal);   color: var(--light); }
-        .msg.success { border-color: var(--teal-light); color: #9effd6; }
-        .msg.error  { border-color: var(--danger); color: #ff9aa2; }
-        .msg.warn   { border-color: var(--accent); color: #ffe0b8; }
-        .msg-icon   { flex-shrink: 0; margin-top: 1px; }
+        .msg.info    { border-color: var(--teal);        color: var(--light); }
+        .msg.success { border-color: var(--teal-light);  color: #9effd6; }
+        .msg.error   { border-color: var(--danger);      color: #ff9aa2; }
+        .msg.warn    { border-color: var(--accent);      color: #ffe0b8; }
+        .msg-icon    { flex-shrink: 0; margin-top: 1px; }
         .msg-time {
             font-family: 'DM Mono', monospace;
             font-size: 0.72rem;
@@ -367,16 +404,14 @@
         }
 
         /* ── Results ── */
-        .result-bar-wrap {
-            margin-bottom: 10px;
-        }
+        .result-bar-wrap { margin-bottom: 10px; }
         .result-bar-header {
             display: flex;
             justify-content: space-between;
             font-size: 0.85rem;
             margin-bottom: 5px;
         }
-        .result-bar-name { font-weight: 500; }
+        .result-bar-name  { font-weight: 500; }
         .result-bar-count { font-family: 'DM Mono', monospace; color: var(--teal-light); }
         .result-bar-bg {
             background: rgba(255,255,255,.06);
@@ -401,9 +436,7 @@
             padding: 14px 18px;
             margin-bottom: 20px;
         }
-        .winner-icon {
-            font-size: 1.6rem;
-        }
+        .winner-icon  { font-size: 1.6rem; }
         .winner-label {
             font-size: 0.72rem;
             color: var(--gray);
@@ -433,15 +466,29 @@
             font-style: italic;
         }
 
-        /* ── Responsive ── */
+        /* ── Responsive: hide sidebar on narrow screens ── */
+        @media (max-width: 900px) {
+            #activity-sidebar { display: none; }
+            .page-wrap { margin-left: auto; padding: 28px 14px 60px; }
+        }
+
         @media (max-width: 540px) {
-            .page-wrap { padding: 28px 14px 60px; }
             .card { padding: 20px 18px; }
             .header-text h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
+
+<!-- ── Fixed Activity Log Sidebar ── -->
+<aside id="activity-sidebar">
+    <div class="sidebar-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:var(--teal);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <span class="sidebar-title">Activity Log</span>
+    </div>
+    <div id="messages"><p class="empty-state">No activity yet.</p></div>
+</aside>
+
 <div class="page-wrap">
 
     <!-- Header -->
@@ -532,7 +579,7 @@
         <div id="resultsList"></div>
     </div>
 
-    <!-- View results + messages -->
+    <!-- Actions -->
     <div class="card">
         <h2>Actions</h2>
         <div class="btn-row" style="margin-bottom:16px;">
@@ -542,12 +589,6 @@
             </button>
         </div>
         <p id="resultsMessage" style="font-size:.83rem;color:var(--gray);"></p>
-    </div>
-
-    <!-- Messages log -->
-    <div class="card">
-        <h2>Activity Log</h2>
-        <div id="messages"><p class="empty-state">No activity yet.</p></div>
     </div>
 
 </div>
@@ -591,7 +632,6 @@ function renderCandidates(candidates) {
     opts.innerHTML = '';
     candidates.forEach((c, i) => {
         const num = i + 1;
-        // candidates card
         const item = document.createElement('div');
         item.className = 'candidate-item';
         item.innerHTML = `
@@ -599,7 +639,6 @@ function renderCandidates(candidates) {
             <span class="candidate-name">${c.name}</span>
             <span class="candidate-votes">${c.voteCount > 0 ? c.voteCount + ' votes' : ''}</span>`;
         list.appendChild(item);
-        // radio option
         const opt = document.createElement('label');
         opt.className = 'vote-option';
         opt.dataset.value = num;
@@ -634,7 +673,6 @@ function renderResults(candidates) {
 
 /* ── Attach original app.js logic via event ── */
 document.addEventListener('DOMContentLoaded', () => {
-    // Patch addMessage if app.js uses it
     window.addMessage = (text, type) => addMsg(text, type);
 });
 </script>
