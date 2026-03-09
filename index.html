@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Voting System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Private Voting System</h1>
+
+        <div class="card">
+            <h2>Wallet</h2>
+            <button id="connectWalletBtn">Connect MetaMask</button>
+            <p><strong>Connected account:</strong> <span id="account">Not connected</span></p>
+        </div>
+
+        <div class="card">
+            <h2>Election Info</h2>
+
+            <button id="loadElectionBtn">Load Election</button>
+
+            <p><strong>Election title:</strong> <span id="electionTitle">-</span></p>
+            <p><strong>Status:</strong> <span id="electionStatus">-</span></p>
+            <p><strong>Time remaining:</strong> <span id="timeRemaining">-</span></p>
+        </div>
+
+        <div class="card">
+            <h2>Candidates</h2>
+            <div id="candidateList"></div>
+        </div>
+
+        <div class="card">
+            <h2>Vote</h2>
+            <p>Choose a candidate:</p>
+            <div id="voteOptions"></div>
+
+            <label for="voteChoice">Candidate Number</label>
+            <input type="number" id="voteChoice" min="1" placeholder="Enter 1, 2, 3...">
+
+            <button id="encryptVoteBtn">Encrypt Vote</button>
+            <p><strong>Encrypted vote:</strong></p>
+            <textarea id="encryptedVoteOutput" rows="4" readonly></textarea>
+
+            <button id="submitVoteBtn">Submit Vote</button>
+        </div>
+
+        <div class="card">
+            <h2>Messages</h2>
+            <div id="messages"></div>
+        </div>
+
+        <div class="card" id="resultsCard" style="display: none;">
+            <h2>Election Results</h2>
+            <p><strong>Winner:</strong> <span id="winnerName">-</span></p>
+            <div id="resultsList"></div>
+        </div>
+
+        <div class="card">
+            <button id="viewResultsBtn">View Results</button>
+            <p id="resultsMessage" style="margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
