@@ -6,7 +6,7 @@ const submitVoteBtn = document.getElementById("submitVoteBtn");
 const accountSpan = document.getElementById("account");
 
 // ===== CONFIG =====
-const CONTRACT_ADDRESS = "0xD06bf73b486e8387A890Eac9108E5B7dC4Fa3dc8";
+const CONTRACT_ADDRESS = "0x83aD9FE67880579b29038689902dacFDf39945E4";
 const PUBLIC_KEY_URL = "public_key.json";
 // ==================
 
