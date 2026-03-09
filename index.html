@@ -4,66 +4,640 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Voting System</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy:       #0D1B2A;
+            --navy-mid:   #1A3A4A;
+            --teal:       #00A896;
+            --teal-light: #02C39A;
+            --teal-dim:   rgba(0,168,150,0.15);
+            --light:      #E8F4F2;
+            --white:      #FFFFFF;
+            --gray:       #8DA4AF;
+            --accent:     #F4A261;
+            --danger:     #E63946;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Background decoration ── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px; right: -200px;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,168,150,.18) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px; left: -150px;
+            width: 450px; height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,168,150,.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Layout ── */
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        .logo-bar {
+            width: 6px;
+            height: 52px;
+            background: var(--teal);
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .header-text h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            color: var(--white);
+        }
+        .header-text p {
+            font-size: 0.82rem;
+            color: var(--teal-light);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--navy-mid);
+            border: 1px solid rgba(0,168,150,.25);
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color .2s;
+        }
+        .card:hover { border-color: rgba(0,168,150,.5); }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--teal);
+            border-radius: 12px 0 0 12px;
+        }
+
+        .card h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--teal);
+            margin-bottom: 18px;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 10px 22px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all .2s;
+            letter-spacing: 0.2px;
+        }
+        .btn-primary {
+            background: var(--teal);
+            color: var(--navy);
+        }
+        .btn-primary:hover {
+            background: var(--teal-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0,168,150,.35);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--teal);
+            border: 1.5px solid var(--teal);
+        }
+        .btn-outline:hover {
+            background: var(--teal-dim);
+            transform: translateY(-1px);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: var(--navy);
+        }
+        .btn-accent:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(244,162,97,.35);
+        }
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1.5px solid var(--danger);
+        }
+        .btn-danger:hover { background: rgba(230,57,70,.12); }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ── Info rows ── */
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            font-size: 0.9rem;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label {
+            color: var(--gray);
+            font-size: 0.82rem;
+        }
+        .info-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--white);
+            max-width: 60%;
+            text-align: right;
+            word-break: break-all;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'DM Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        .status-voting   { background: rgba(0,168,150,.2);  color: var(--teal-light); border: 1px solid var(--teal); }
+        .status-closed   { background: rgba(230,57,70,.2);  color: #ff8a93;           border: 1px solid var(--danger); }
+        .status-awaiting { background: rgba(244,162,97,.2); color: var(--accent);     border: 1px solid var(--accent); }
+        .status-default  { background: rgba(141,164,175,.2);color: var(--gray);       border: 1px solid var(--gray); }
+
+        /* ── Candidates list ── */
+        .candidate-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: rgba(255,255,255,.04);
+            margin-bottom: 8px;
+            transition: background .15s;
+        }
+        .candidate-item:hover { background: rgba(0,168,150,.08); }
+        .candidate-num {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--teal-dim);
+            border: 1.5px solid var(--teal);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--teal-light);
+            flex-shrink: 0;
+        }
+        .candidate-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .candidate-votes {
+            margin-left: auto;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* ── Vote options (radio buttons) ── */
+        .vote-options { margin-bottom: 18px; }
+        .vote-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            border: 1.5px solid rgba(255,255,255,.08);
+            transition: all .15s;
+        }
+        .vote-option:hover  { border-color: var(--teal); background: var(--teal-dim); }
+        .vote-option.selected { border-color: var(--teal); background: var(--teal-dim); }
+        .vote-option input[type="radio"] { display: none; }
+        .radio-dot {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--gray);
+            display: flex; align-items: center; justify-content: center;
+            transition: border-color .15s;
+            flex-shrink: 0;
+        }
+        .vote-option.selected .radio-dot { border-color: var(--teal); }
+        .radio-dot::after {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--teal);
+            opacity: 0;
+            transition: opacity .15s;
+        }
+        .vote-option.selected .radio-dot::after { opacity: 1; }
+
+        /* ── Input ── */
+        .input-group { margin-bottom: 16px; }
+        .input-group label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--gray);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        input[type="number"] {
+            width: 100%;
+            background: rgba(255,255,255,.05);
+            border: 1.5px solid rgba(255,255,255,.12);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--white);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color .15s;
+        }
+        input[type="number"]:focus { border-color: var(--teal); }
+
+        /* ── Textarea ── */
+        textarea {
+            width: 100%;
+            background: rgba(0,0,0,.25);
+            border: 1.5px solid rgba(255,255,255,.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: var(--teal-light);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.78rem;
+            outline: none;
+            resize: vertical;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            transition: border-color .15s;
+        }
+        textarea:focus { border-color: var(--teal); }
+
+        /* ── Button row ── */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ── Messages log ── */
+        #messages {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        #messages::-webkit-scrollbar { width: 4px; }
+        #messages::-webkit-scrollbar-track { background: transparent; }
+        #messages::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 2px; }
+
+        .msg {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            font-size: 0.83rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(255,255,255,.03);
+            border-left: 3px solid transparent;
+            animation: fadeIn .3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        .msg.info   { border-color: var(--teal);   color: var(--light); }
+        .msg.success { border-color: var(--teal-light); color: #9effd6; }
+        .msg.error  { border-color: var(--danger); color: #ff9aa2; }
+        .msg.warn   { border-color: var(--accent); color: #ffe0b8; }
+        .msg-icon   { flex-shrink: 0; margin-top: 1px; }
+        .msg-time {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--gray);
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        /* ── Results ── */
+        .result-bar-wrap {
+            margin-bottom: 10px;
+        }
+        .result-bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        .result-bar-name { font-weight: 500; }
+        .result-bar-count { font-family: 'DM Mono', monospace; color: var(--teal-light); }
+        .result-bar-bg {
+            background: rgba(255,255,255,.06);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .result-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--teal-light));
+            border-radius: 4px;
+            transition: width .6s ease;
+        }
+
+        .winner-banner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(0,168,150,.12);
+            border: 1.5px solid var(--teal);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+        }
+        .winner-icon {
+            font-size: 1.6rem;
+        }
+        .winner-label {
+            font-size: 0.72rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .winner-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--teal-light);
+        }
+
+        /* ── Divider ── */
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,.07);
+            margin: 18px 0;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            color: var(--gray);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 16px 0;
+            font-style: italic;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 540px) {
+            .page-wrap { padding: 28px 14px 60px; }
+            .card { padding: 20px 18px; }
+            .header-text h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Private Voting System</h1>
+<div class="page-wrap">
 
-        <div class="card">
-            <h2>Wallet</h2>
-            <button id="connectWalletBtn">Connect MetaMask</button>
-            <p><strong>Connected account:</strong> <span id="account">Not connected</span></p>
+    <!-- Header -->
+    <header>
+        <div class="logo-bar"></div>
+        <div class="header-text">
+            <h1>Private Voting System</h1>
+            <p>ElGamal Encryption · Ethereum · Sepolia Testnet</p>
         </div>
+    </header>
 
-        <div class="card">
-            <h2>Election Info</h2>
-
-            <button id="loadElectionBtn">Load Election</button>
-
-            <p><strong>Election title:</strong> <span id="electionTitle">-</span></p>
-            <p><strong>Status:</strong> <span id="electionStatus">-</span></p>
-            <p><strong>Time remaining:</strong> <span id="timeRemaining">-</span></p>
+    <!-- Wallet -->
+    <div class="card">
+        <h2>Wallet</h2>
+        <div class="info-row">
+            <span class="info-label">Connected account</span>
+            <span class="info-value" id="account">Not connected</span>
         </div>
-
-        <div class="card">
-            <h2>Candidates</h2>
-            <div id="candidateList"></div>
-        </div>
-
-        <div class="card">
-            <h2>Vote</h2>
-            <p>Choose a candidate:</p>
-            <div id="voteOptions"></div>
-
-            <label for="voteChoice">Candidate Number</label>
-            <input type="number" id="voteChoice" min="1" placeholder="Enter 1, 2, 3...">
-
-            <button id="encryptVoteBtn">Encrypt Vote</button>
-            <p><strong>Encrypted vote:</strong></p>
-            <textarea id="encryptedVoteOutput" rows="4" readonly></textarea>
-
-            <button id="submitVoteBtn">Submit Vote</button>
-        </div>
-
-        <div class="card">
-            <h2>Messages</h2>
-            <div id="messages"></div>
-        </div>
-
-        <div class="card" id="resultsCard" style="display: none;">
-            <h2>Election Results</h2>
-            <p><strong>Winner:</strong> <span id="winnerName">-</span></p>
-            <div id="resultsList"></div>
-        </div>
-
-        <div class="card">
-            <button id="viewResultsBtn">View Results</button>
-            <p id="resultsMessage" style="margin-top: 10px;"></p>
-        </div>
+        <div class="divider"></div>
+        <button class="btn btn-primary" id="connectWalletBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/><circle cx="17" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+            Connect MetaMask
+        </button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
-    <script src="app.js"></script>
+    <!-- Election Info -->
+    <div class="card">
+        <h2>Election Info</h2>
+        <div class="info-row">
+            <span class="info-label">Election title</span>
+            <span class="info-value" id="electionTitle">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Status</span>
+            <span id="electionStatus"><span class="status-badge status-default">—</span></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Time remaining</span>
+            <span class="info-value" id="timeRemaining">—</span>
+        </div>
+        <div class="divider"></div>
+        <button class="btn btn-outline" id="loadElectionBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            Load Election
+        </button>
+    </div>
+
+    <!-- Candidates -->
+    <div class="card">
+        <h2>Candidates</h2>
+        <div id="candidateList"><p class="empty-state">Load the election to see candidates.</p></div>
+    </div>
+
+    <!-- Vote -->
+    <div class="card">
+        <h2>Cast Your Vote</h2>
+        <div class="vote-options" id="voteOptions"></div>
+        <div class="input-group">
+            <label for="voteChoice">Or enter candidate number</label>
+            <input type="number" id="voteChoice" min="1" placeholder="e.g. 1, 2, 3 …">
+        </div>
+        <div class="btn-row" style="margin-bottom:16px;">
+            <button class="btn btn-primary" id="encryptVoteBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Encrypt Vote
+            </button>
+        </div>
+        <div class="input-group">
+            <label>Encrypted ballot (ElGamal ciphertext)</label>
+            <textarea id="encryptedVoteOutput" rows="3" readonly placeholder="Ciphertext will appear here…"></textarea>
+        </div>
+        <button class="btn btn-accent" id="submitVoteBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Submit Vote On-Chain
+        </button>
+    </div>
+
+    <!-- Results -->
+    <div class="card" id="resultsCard" style="display:none;">
+        <h2>Election Results</h2>
+        <div class="winner-banner" id="winnerBanner" style="display:none;">
+            <span class="winner-icon">🏆</span>
+            <div>
+                <div class="winner-label">Winner</div>
+                <div class="winner-name" id="winnerName">—</div>
+            </div>
+        </div>
+        <div id="resultsList"></div>
+    </div>
+
+    <!-- View results + messages -->
+    <div class="card">
+        <h2>Actions</h2>
+        <div class="btn-row" style="margin-bottom:16px;">
+            <button class="btn btn-outline" id="viewResultsBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                View Results
+            </button>
+        </div>
+        <p id="resultsMessage" style="font-size:.83rem;color:var(--gray);"></p>
+    </div>
+
+    <!-- Messages log -->
+    <div class="card">
+        <h2>Activity Log</h2>
+        <div id="messages"><p class="empty-state">No activity yet.</p></div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+<script>
+/* ── Tiny message helper ── */
+function addMsg(text, type = 'info') {
+    const box = document.getElementById('messages');
+    const empty = box.querySelector('.empty-state');
+    if (empty) empty.remove();
+    const icons = { info: 'ℹ️', success: '✅', error: '❌', warn: '⚠️' };
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const el = document.createElement('div');
+    el.className = `msg ${type}`;
+    el.innerHTML = `<span class="msg-icon">${icons[type] || 'ℹ️'}</span><span>${text}</span><span class="msg-time">${now}</span>`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+}
+
+/* ── Status badge helper ── */
+function setStatus(text) {
+    const map = { 'Voting': 'status-voting', 'Closed': 'status-closed', 'Awaiting results': 'status-awaiting' };
+    const cls = map[text] || 'status-default';
+    document.getElementById('electionStatus').innerHTML = `<span class="status-badge ${cls}">${text}</span>`;
+}
+
+/* ── Vote option selection ── */
+function selectOption(el) {
+    document.querySelectorAll('.vote-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    const val = el.dataset.value;
+    document.getElementById('voteChoice').value = val;
+}
+
+/* ── Render candidates ── */
+function renderCandidates(candidates) {
+    const list = document.getElementById('candidateList');
+    const opts = document.getElementById('voteOptions');
+    list.innerHTML = '';
+    opts.innerHTML = '';
+    candidates.forEach((c, i) => {
+        const num = i + 1;
+        // candidates card
+        const item = document.createElement('div');
+        item.className = 'candidate-item';
+        item.innerHTML = `
+            <div class="candidate-num">${num}</div>
+            <span class="candidate-name">${c.name}</span>
+            <span class="candidate-votes">${c.voteCount > 0 ? c.voteCount + ' votes' : ''}</span>`;
+        list.appendChild(item);
+        // radio option
+        const opt = document.createElement('label');
+        opt.className = 'vote-option';
+        opt.dataset.value = num;
+        opt.innerHTML = `
+            <div class="radio-dot"></div>
+            <span>${num}. ${c.name}</span>`;
+        opt.addEventListener('click', () => selectOption(opt));
+        opts.appendChild(opt);
+    });
+}
+
+/* ── Render results ── */
+function renderResults(candidates) {
+    const total = candidates.reduce((s, c) => s + Number(c.voteCount), 0) || 1;
+    const list = document.getElementById('resultsList');
+    list.innerHTML = '';
+    candidates.forEach(c => {
+        const pct = Math.round((Number(c.voteCount) / total) * 100);
+        const wrap = document.createElement('div');
+        wrap.className = 'result-bar-wrap';
+        wrap.innerHTML = `
+            <div class="result-bar-header">
+                <span class="result-bar-name">${c.name}</span>
+                <span class="result-bar-count">${c.voteCount} votes · ${pct}%</span>
+            </div>
+            <div class="result-bar-bg">
+                <div class="result-bar-fill" style="width:${pct}%"></div>
+            </div>`;
+        list.appendChild(wrap);
+    });
+}
+
+/* ── Attach original app.js logic via event ── */
+document.addEventListener('DOMContentLoaded', () => {
+    // Patch addMessage if app.js uses it
+    window.addMessage = (text, type) => addMsg(text, type);
+});
+</script>
+<script src="app.js"></script>
 </body>
 </html>
